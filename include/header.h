@@ -1,9 +1,48 @@
 #pragma once
 
+#include <alcd.h>
+#include <delay.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+
+#define FRAMING_ERROR       (1 << FE)
+#define PARITY_ERROR        (1 << UPE)
+#define DATA_OVERRUN        (1 << DOR)
+#define DATA_REGISTER_EMPTY (1 << UDRE)
+#define RX_COMPLETE         (1 << RXC)
+
+#ifndef RXB8
+#define RXB8 1
+#endif
+
+#ifndef TXB8
+#define TXB8 0
+#endif
+
+#ifndef UPE
+#define UPE 2
+#endif
+
+#ifndef DOR
+#define DOR 3
+#endif
+
+#ifndef FE
+#define FE 4
+#endif
+
+#ifndef UDRE
+#define UDRE 5
+#endif
+
+#ifndef RXC
+#define RXC 7
+#endif
+
+#define RX_BUFFER_SIZE 32
+#define TX_BUFFER_SIZE 32
 
 #define BUZZER_GPIO  PORTA.0
 #define BUTTON1_GPIO PIND.2
@@ -23,15 +62,21 @@
 
 #define BUZZER_DELAY 100 // 100 ms
 
-#define DOT   "."
-#define DASH  "-"
-#define SPACE "/"
+#define DOT_CHAR '.'
+#define DOT_STR  "."
+
+#define DASH_CHAR '-'
+#define DASH_STR  "-"
+
+#define SPACE_CHAR '/'
+#define SPACE_STR  "/"
+
 #define EMPTY ""
 
 /* structures */
 typedef struct {
-    uint8_t  letter;
-    uint8_t *morse;
+    char  letter;
+    char *morse;
 } morse_table_t;
 
 /* global variables */
@@ -40,16 +85,16 @@ extern uint8_t idx;
 extern morse_table_t MORSE_TABLE[];
 extern const size_t  MORSE_TABLE_LEN;
 
-extern uint8_t *input_string;
-extern uint8_t *encoded_signal;
+extern char input_string[256];
+extern char encoded_signal[256];
 
-extern uint8_t  current_time;
-extern uint8_t *output_signal;
-extern uint8_t *decoded_string;
+extern uint8_t current_time;
+extern char    output_signal[8];
+extern char    decoded_string[64];
 
 /* global functions */
 void setup_reg();
-void buzzer();
+void beep(char type);
 
 void encode_machine();
 void decode_machine(uint8_t *current_state);

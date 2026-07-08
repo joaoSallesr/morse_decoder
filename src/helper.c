@@ -114,23 +114,23 @@ void setup_reg() {
 #asm("sei") /* Global enable interrupts */
 }
 
-void beep(uint8_t type) {
+void beep(char type) {
 
-    if (type == DOT) {
+    if (type == DOT_CHAR) {
         delay_ms(BUZZER_DELAY);
         BUZZER_GPIO = 0;
         delay_ms(BUZZER_DELAY);
         BUZZER_GPIO = 1;
     }
 
-    if (type == DASH) {
+    if (type == DASH_CHAR) {
         delay_ms(BUZZER_DELAY);
         BUZZER_GPIO = 0;
         delay_ms(3 * BUZZER_DELAY);
         BUZZER_GPIO = 1;
     }
 
-    if (type == SPACE) {
+    if (type == SPACE_CHAR) {
         delay_ms(6 * BUZZER_DELAY);
     }
 }
