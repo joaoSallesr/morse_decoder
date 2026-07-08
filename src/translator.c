@@ -1,5 +1,7 @@
 #include "header.h"
 
+uint8_t idx = 0;
+
 void encode_machine() {
     strcpy(encoded_signal, EMPTY);
     uint8_t pos = 0;

@@ -79,6 +79,15 @@ typedef struct {
     char *morse;
 } morse_table_t;
 
+/* AVR setup variables */
+extern bit rx_buffer_overflow;
+
+extern char rx_buffer[RX_BUFFER_SIZE];
+extern char tx_buffer[TX_BUFFER_SIZE];
+
+extern unsigned char rx_wr_index, rx_rd_index, rx_counter;
+extern unsigned char tx_wr_index, tx_rd_index, tx_counter;
+
 /* global variables */
 extern uint8_t idx;
 

@@ -1,19 +1,24 @@
 #include "header.h"
 
+// Interrupt flags
 static bool flag_timer = false;
 static bool flag_input = false;
 
+// This flag is set on USART Receiver buffer overflow
+bit rx_buffer_overflow;
+
+// USART Receiver/Transmitter buffer
+char rx_buffer[RX_BUFFER_SIZE];
+char tx_buffer[TX_BUFFER_SIZE];
+
+unsigned char rx_wr_index, rx_rd_index, rx_counter;
+unsigned char tx_wr_index, tx_rd_index, tx_counter;
+
+// timer interrupt
 interrupt[TIM1_COMPA] void timer1_compa_isr(void) {
     TCNT1      = 0x00;
     flag_timer = true;
 }
-
-char rx_buffer[RX_BUFFER_SIZE];
-
-unsigned char rx_wr_index, rx_rd_index, rx_counter;
-
-// This flag is set on USART Receiver buffer overflow
-bit rx_buffer_overflow;
 
 // USART Receiver interrupt service routine
 interrupt[USART_RXC] void usart_rx_isr(void) {
@@ -36,31 +41,6 @@ interrupt[USART_RXC] void usart_rx_isr(void) {
     }
 }
 
-#ifndef _DEBUG_TERMINAL_IO_
-// Get a character from the USART Receiver buffer
-#define _ALTERNATE_GETCHAR_
-#pragma used +
-char getchar(void) {
-    char data;
-    while (rx_counter == 0)
-        continue;
-    data = rx_buffer[rx_rd_index++];
-    if (rx_rd_index == RX_BUFFER_SIZE)
-        rx_rd_index = 0;
-
-#asm("cli")
-    --rx_counter;
-#asm("sei")
-    return data;
-}
-#pragma used -
-#endif
-
-// USART Transmitter buffer
-char tx_buffer[TX_BUFFER_SIZE];
-
-unsigned char tx_wr_index, tx_rd_index, tx_counter;
-
 // USART Transmitter interrupt service routine
 interrupt[USART_TXC] void usart_tx_isr(void) {
     if (tx_counter) {
@@ -70,28 +50,6 @@ interrupt[USART_TXC] void usart_tx_isr(void) {
             tx_rd_index = 0;
     }
 }
-
-#ifndef _DEBUG_TERMINAL_IO_
-// Write a character to the USART Transmitter buffer
-#define _ALTERNATE_PUTCHAR_
-#pragma used +
-void putchar(char c) {
-    while (tx_counter == TX_BUFFER_SIZE)
-        continue;
-#asm("cli")
-    if (tx_counter || ((UCSRA & DATA_REGISTER_EMPTY) == 0)) {
-        tx_buffer[tx_wr_index++] = c;
-
-        if (tx_wr_index == TX_BUFFER_SIZE)
-            tx_wr_index = 0;
-
-        ++tx_counter;
-    } else
-        UDR = c;
-#asm("sei")
-}
-#pragma used -
-#endif
 
 // morse
 morse_table_t MORSE_TABLE[] = {

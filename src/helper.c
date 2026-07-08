@@ -1,52 +1,77 @@
 #include "header.h"
 
+// change getchar()
+#ifndef _DEBUG_TERMINAL_IO_
+// Get a character from the USART Receiver buffer
+#define _ALTERNATE_GETCHAR_
+#pragma used +
+
+char getchar(void) {
+    char data;
+    while (rx_counter == 0)
+        continue;
+    data = rx_buffer[rx_rd_index++];
+    if (rx_rd_index == RX_BUFFER_SIZE)
+        rx_rd_index = 0;
+
+#asm("cli")
+    --rx_counter;
+#asm("sei")
+    return data;
+}
+
+#pragma used -
+#endif
+
+// change putchar
+#ifndef _DEBUG_TERMINAL_IO_
+// Write a character to the USART Transmitter buffer
+#define _ALTERNATE_PUTCHAR_
+#pragma used +
+
+void putchar(char c) {
+    while (tx_counter == TX_BUFFER_SIZE)
+        continue;
+
+#asm("cli")
+    if (tx_counter || ((UCSRA & DATA_REGISTER_EMPTY) == 0)) {
+        tx_buffer[tx_wr_index++] = c;
+
+        if (tx_wr_index == TX_BUFFER_SIZE)
+            tx_wr_index = 0;
+
+        ++tx_counter;
+    } else
+        UDR = c;
+#asm("sei")
+}
+
+#pragma used -
+#endif
+
 void setup_reg() {
-    // Input/Output Ports initialization
     // Port A initialization
-    // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
-    // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
     PORTA = 0x01;
     DDRA  = 0x01;
 
     // Port B initialization
-    // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
-    // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
     PORTB = 0x00;
     DDRB  = 0x03;
 
     // Port C initialization
-    // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
-    // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
     PORTC = 0x00;
-    DDRC  = 0x00;
+    DDRC  = 0x08;
 
     // Port D initialization
-    // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
-    // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
     PORTD = 0x00;
     DDRD  = 0x00;
 
     // Timer/Counter 0 initialization
-    // Clock source: System Clock
-    // Clock value: Timer 0 Stopped
-    // Mode: Normal top=0xFF
-    // OC0 output: Disconnected
     TCCR0 = 0b00000101;
     TCNT0 = 0x00;
     OCR0  = 143;
 
     // Timer/Counter 1 initialization
-    // Clock source: System Clock
-    // Clock value: Timer1 Stopped
-    // Mode: Normal top=0xFFFF
-    // OC1A output: Discon.
-    // OC1B output: Discon.
-    // Noise Canceler: Off
-    // Input Capture on Falling Edge
-    // Timer1 Overflow Interrupt: Off
-    // Input Capture Interrupt: Off
-    // Compare A Match Interrupt: Off
-    // Compare B Match Interrupt: Off
     TCCR1A = 0b00000101; // 1024
     TCCR1B = 0b00000101; // 1024
     TCNT1H = 0x00;
@@ -57,23 +82,16 @@ void setup_reg() {
 
     // OCR1AH=0x00;
     // OCR1AL=0x00;
-    OCR1BH = 0x00;
-    OCR1BL = 0x00;
+    // OCR1BH = 0x00;
+    // OCR1BL = 0x00;
 
     // Timer/Counter 2 initialization
-    // Clock source: System Clock
-    // Clock value: Timer2 Stopped
-    // Mode: Normal top=0xFF
-    // OC2 output: Disconnected
     ASSR  = 0x00;
     TCCR2 = 0x00;
     TCNT2 = 0x00;
     OCR2  = 0x00;
 
     // External Interrupt(s) initialization
-    // INT0: On
-    // INT1: Off
-    // INT2: Off
     MCUCR  = 0b00000010;
     MCUCSR = 0x00;
     GICR   = 0b01000000;
@@ -82,11 +100,6 @@ void setup_reg() {
     TIMSK = 0b00010000;
 
     // USART initialization
-    // Communication Parameters: 8 Data, 1 Stop, No Parity
-    // USART Receiver: On
-    // USART Transmitter: On
-    // USART Mode: Asynchronous
-    // USART Baud Rate: 19200
     UCSRA = 0x00;
     UCSRB = 0xD8;
     UCSRC = 0x86;
@@ -94,24 +107,19 @@ void setup_reg() {
     UBRRL = 0x2F;
 
     // Analog Comparator initialization
-    // Analog Comparator: Off
-    // Analog Comparator Input Capture by Timer/Counter 1: Off
     ACSR  = 0x80;
     SFIOR = 0x00;
 
     // ADC initialization
-    // ADC disabled
     ADCSRA = 0x00;
 
     // SPI initialization
-    // SPI disabled
     SPCR = 0x00;
 
     // TWI initialization
-    // TWI disabled
     TWCR = 0x00;
 
-#asm("sei") /* Global enable interrupts */
+#asm("sei")
 }
 
 void beep(char type) {
