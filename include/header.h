@@ -1,17 +1,14 @@
-#pragma once
+#ifndef HEADER_H
+#define HEADER_H
 
 #include <alcd.h>
 #include <delay.h>
+#include <mega16.h>
 #include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
-#define FRAMING_ERROR       (1 << FE)
-#define PARITY_ERROR        (1 << UPE)
-#define DATA_OVERRUN        (1 << DOR)
-#define DATA_REGISTER_EMPTY (1 << UDRE)
-#define RX_COMPLETE         (1 << RXC)
+// USART setup ===================================================================================================
 
 #ifndef RXB8
 #define RXB8 1
@@ -41,69 +38,29 @@
 #define RXC 7
 #endif
 
+#define FRAMING_ERROR       (1 << FE)
+#define PARITY_ERROR        (1 << UPE)
+#define DATA_OVERRUN        (1 << DOR)
+#define DATA_REGISTER_EMPTY (1 << UDRE)
+#define RX_COMPLETE         (1 << RXC)
+
 #define RX_BUFFER_SIZE 32
 #define TX_BUFFER_SIZE 32
 
-#define BUZZER_GPIO  PORTA.0
-#define BUTTON1_GPIO PIND.2
-#define BUTTON2_GPIO PIND.3
+// USART setup ===================================================================================================
 
-#define DEFAULT       0
-#define COUNTING      1
-#define CHECK_BTN     2
-#define DOT_INPUT     3
-#define DASH_INPUT    4
-#define WAIT_INPUT    5
-#define DECODE_SIGNAL 6
-#define PRINT_WORD    7
+#define STANDBY        0
+#define COUNT_TIME     1
+#define VERIFICA_BOTAO 2
+#define PONTO          3
+#define TRACO          4
+#define AGUARDA_CLIQUE 5
+#define DECODIFICA     6
 
-#define INPUT_DURATION 30 // input duration - dot x dash
-#define INPUT_DELAY    90 // end letter after INPUT_DELAY
+#define TABLE_SIZE     27
+#define TIMER_DESEJADO 30
+#define BUZZER_TICK    100 // in ms
 
-#define BUZZER_DELAY 100 // 100 ms
+void reg_init(void);
 
-#define DOT_CHAR '.'
-#define DOT_STR  "."
-
-#define DASH_CHAR '-'
-#define DASH_STR  "-"
-
-#define SPACE_CHAR '/'
-#define SPACE_STR  "/"
-
-#define EMPTY ""
-
-/* structures */
-typedef struct {
-    char  letter;
-    char *morse;
-} morse_table_t;
-
-/* AVR setup variables */
-extern bit rx_buffer_overflow;
-
-extern char rx_buffer[RX_BUFFER_SIZE];
-extern char tx_buffer[TX_BUFFER_SIZE];
-
-extern unsigned char rx_wr_index, rx_rd_index, rx_counter;
-extern unsigned char tx_wr_index, tx_rd_index, tx_counter;
-
-/* global variables */
-extern uint8_t idx;
-
-extern morse_table_t MORSE_TABLE[];
-extern const size_t  MORSE_TABLE_LEN;
-
-extern char input_string[256];
-extern char encoded_signal[256];
-
-extern uint8_t current_time;
-extern char    output_signal[8];
-extern char    decoded_string[64];
-
-/* global functions */
-void setup_reg();
-void beep(char type);
-
-void encode_machine();
-void decode_machine(uint8_t *current_state);
+#endif
