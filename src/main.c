@@ -132,7 +132,6 @@ void main(void) {
     // Decodificação (entra morse -> sai letra)
     char morse_input[8];
     char letter_output[2];
-    char lcd_string[17];
 
     morse_input[0] = '\0';
     lcd_string[0]  = '\0';
@@ -255,6 +254,7 @@ void main(void) {
 
                     estado = VERIFICA_BOTAO;
                 }
+
                 break;
 
             case VERIFICA_BOTAO:
@@ -264,6 +264,7 @@ void main(void) {
                 } else {
                     estado = PONTO;
                 }
+
                 break;
 
             case PONTO:
@@ -282,6 +283,7 @@ void main(void) {
                 strcat(morse_input, "-");
 
                 estado = AGUARDA_CLIQUE;
+
                 break;
 
             case AGUARDA_CLIQUE:
