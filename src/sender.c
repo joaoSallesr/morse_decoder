@@ -166,8 +166,6 @@ void main(void) {
             putchar('M');
             printf("%s", morse_output);
             putchar('\n');
-
-            // TODO:  logica de envio para a outra placa (MORSE)
         }
 
         // MORSE DECODER
@@ -186,10 +184,9 @@ void main(void) {
 
                 // Se o botão 1 for pressionado, envia espaço
                 if (PIND.3 == 0) {
-                    if (strlen(lcd_string) < 16) {
-                        strcat(lcd_string, " ");
-                        putchar(' ');
-                    }
+                    putchar('L');
+                    printf(' ');
+                    putchar('\n');
 
                     delay_ms(500);
                 }
@@ -255,8 +252,6 @@ void main(void) {
                 break;
 
             case DECODIFICA:
-                // strcat(morse_input, "\0");
-
                 // Percorre a lista de morse e verifica com o input
                 for (idx_list = 0; idx_list < TABLE_SIZE; idx_list++) {
                     if (strcmp(morse_input, morse_list[idx_list]) == 0) {
@@ -265,9 +260,6 @@ void main(void) {
                         putchar('\n');
 
                         sprintf(letter_output, "%c", letter_list[idx_list]);
-
-                        // TODO: logica de envio para a outra placa (LETRA / LETRAS)
-                        // no outro codigo criar lcd_string[33] e ir adicionando
 
                         break;
                     }

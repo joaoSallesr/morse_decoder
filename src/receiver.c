@@ -184,37 +184,37 @@ void main(void) {
 
 void reg_init(void) {
     // Port A initialization
-    PORTA = 0x01;
-    DDRA  = 0x01;
+    PORTA = 0x00;
+    DDRA  = 0x00;
 
     // Port B initialization
     PORTB = 0x00;
-    DDRB  = 0x03;
+    DDRB  = 0x00;
 
     // Port C initialization
     PORTC = 0x00;
-    DDRC  = 0x08;
+    DDRC  = 0x00;
 
     // Port D initialization
     PORTD = 0x00;
     DDRD  = 0x00;
 
     // Timer/Counter 0 initialization
-    TCCR0 = 0b00000101;
+    TCCR0 = 0x00;
     TCNT0 = 0x00;
-    OCR0  = 143;
+    OCR0  = 0x00;
 
     // Timer/Counter 1 initialization
-    TCCR1A = 0b00000101; // 1024
-    TCCR1B = 0b00000101; // 1024
+    TCCR1A = 0x00;
+    TCCR1B = 0x00;
     TCNT1H = 0x00;
     TCNT1L = 0x00;
     ICR1H  = 0x00;
     ICR1L  = 0x00;
-    OCR1A  = 143;
+    OCR1A  = 0x00;
 
-    // OCR1AH=0x00;
-    // OCR1AL=0x00;
+    OCR1AH = 0x00;
+    OCR1AL = 0x00;
     OCR1BH = 0x00;
     OCR1BL = 0x00;
 
@@ -225,12 +225,12 @@ void reg_init(void) {
     OCR2  = 0x00;
 
     // External Interrupt(s) initialization
-    MCUCR  = 0b00000010; // INT0 - falling edge
+    MCUCR  = 0x00;
     MCUCSR = 0x00;
-    GICR   = 0b01000000;
+    GICR   = 0x00;
 
     // Timer(s)/Counter(s) Interrupt(s) initialization
-    TIMSK = 0b00010000;
+    TIMSK = 0x00;
 
     // USART initialization
     UCSRA = 0x00;
