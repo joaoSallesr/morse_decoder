@@ -240,7 +240,7 @@ void reg_init(void) {
     UBRRL = 0x2F;
 
     // Analog Comparator initialization
-    ACSR  = 0x80;
+    ACSR  = 0x00;
     SFIOR = 0x00;
 
     // ADC initialization
