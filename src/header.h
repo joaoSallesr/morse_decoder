@@ -8,6 +8,19 @@
 #include <stdio.h>
 #include <string.h>
 
+#define STANDBY        0
+#define COUNT_TIME     1
+#define VERIFICA_BOTAO 2
+#define PONTO          3
+#define TRACO          4
+#define SOLTA_BOTAO    5
+#define AGUARDA_CLIQUE 6
+#define DECODIFICA     7
+
+#define TABLE_SIZE     27
+#define TIMER_DESEJADO 30
+#define BUZZER_TICK    100 // in ms
+
 // USART setup ===================================================================================================
 
 #ifndef RXB8
@@ -49,17 +62,13 @@
 
 // USART setup ===================================================================================================
 
-#define STANDBY        0
-#define COUNT_TIME     1
-#define VERIFICA_BOTAO 2
-#define PONTO          3
-#define TRACO          4
-#define AGUARDA_CLIQUE 5
-#define DECODIFICA     6
-
-#define TABLE_SIZE     27
-#define TIMER_DESEJADO 30
-#define BUZZER_TICK    100 // in ms
+// Global variables
+extern bool flag_usart;
+extern char rx_buffer[RX_BUFFER_SIZE];
+extern char tx_buffer[TX_BUFFER_SIZE];
+extern unsigned char rx_wr_index, rx_rd_index, rx_counter;
+extern unsigned char tx_wr_index, tx_rd_index, tx_counter;
+extern bit rx_buffer_overflow;
 
 void reg_init(void);
 
