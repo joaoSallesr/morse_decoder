@@ -132,6 +132,7 @@ void main(void) {
     // Decodificação (entra morse -> sai letra)
     char morse_input[8];
     char letter_output[2];
+    char lcd_string[33];
 
     morse_input[0] = '\0';
     lcd_string[0]  = '\0';
